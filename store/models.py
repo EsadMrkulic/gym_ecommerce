@@ -12,6 +12,12 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    # In the Django Admin Panel, Django makes all classes plural by adding an "s" at the end of it.
+    # So, Category would be Categorys. But it should be Categories.
+    # Therefore, this class Meta class fixes this.
+    class Meta:
+        verbose_name_plural = "Categories"
+
 
 # Customer model
 class Customer(models.Model):
