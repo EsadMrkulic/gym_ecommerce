@@ -11,3 +11,8 @@ def home(request):
     products = Product.objects.all()
 
     return render(request, "home.html", {"products": products})
+
+
+# About is view
+def about(request):
+    return render(request, "about.html", {})
