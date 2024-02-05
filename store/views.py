@@ -10,6 +10,12 @@ from django import forms
 # Create your views here.
 
 
+# Product view
+def product(request, pk):
+    product = Product.objects.get(id=pk)
+    return render(request, "product.html", {"product": product})
+
+
 # Homepage view
 def home(request):
 
