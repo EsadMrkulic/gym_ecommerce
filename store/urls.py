@@ -10,4 +10,7 @@ urlpatterns = [
     path(
         "product/<int:pk>", views.product, name="product"
     ),  # Int = integer / pk = primary key
+    path(
+        "category/<str:foo>", views.category, name="category"
+    ),  # Str = string / foo = variable passed in
 ]
