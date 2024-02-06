@@ -34,11 +34,41 @@
                                 <p class="card-text">{{ product.description }}</p>
                                 <p class="card-text"><small class="text-body-secondary">${{ product.price }}</small></p>
                             {% endif %}
+                            <button type="button" value="{{ product.id }}" id="add-cart" class="btn btn-secondary">Add to Cart</button>
                         </center>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Javascript Scripting -->
+    <script>
+        // Check if the button was pressed
+        $(document).on('click', '#add-cart', function(e){
+            e.preventDefault();
+            // Use Ajax to send info to backend without refreshing the webpage
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_add' %}",
+                data: {
+                    product_id: $('#add-cart').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+
+                success: function(json){
+                    console.log(json)
+                },
+
+                error: function(xhr, errmsh, err){
+
+                }
+
+
+            });
+        });
+
+    </script>
 
 {% endblock %}
