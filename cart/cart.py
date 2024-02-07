@@ -1,3 +1,6 @@
+from store.models import Product
+
+
 # Cart class
 class Cart:
     def __init__(self, request):  # Request to view page
@@ -14,17 +17,33 @@ class Cart:
         self.cart = cart
 
     # Add function
-    def add(self, product):
+    def add(self, product, quantity):
         product_id = str(product.id)
+        product_qty = str(quantity)
 
         # Logic
         if product_id in self.cart:
             pass
         else:
-            self.cart[product_id] = {"price": str(product.price)}
+            # self.cart[product_id] = {"price": str(product.price)}
+            self.cart[product_id] = int(product_qty)
 
         self.session.modified = True
 
     # Create a filter that gives us a length
     def __len__(self):
         return len(self.cart)
+
+    # Function to see what's in the cart
+    def get_products(self):
+        # Get ids from cart
+        product_ids = self.cart.keys()
+        # Use ids to lookup products in database model
+        products = Product.objects.filter(id__in=product_ids)
+
+        # Return the looked up products
+        return products
+
+    def get_quants(self):
+        quantities = self.cart
+        return quantities
