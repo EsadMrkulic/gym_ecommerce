@@ -47,3 +47,24 @@ class Cart:
     def get_quants(self):
         quantities = self.cart
         return quantities
+
+    # Function to update quantity of products
+    def update(self, product, quantity):
+        product_id = str(
+            product
+        )  # Product ID is actually a string in the dictionary, so we want this to be a string
+        product_qty = int(
+            quantity
+        )  # This is a integer in the dictionary, so we want this to be an integer
+
+        # Get cart
+        ourcart = self.cart
+
+        # Update dictionary/cart
+        ourcart[product_id] = product_qty
+
+        self.session.modified = True
+
+        # Unnecessary, but always good to return something
+        thing = self.cart
+        return thing

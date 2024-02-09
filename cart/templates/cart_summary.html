@@ -60,14 +60,13 @@
                                 <div class="row justify-content-center">
                                     <div class="col-md-2">Quantity:</div>
                                     <div class="col-md-2">
-                                        <select class="form-select form-select-sm" id="qty-cart">
-                                            <option selected>
-                                                {% for key, value in quantities.items %}
-                                                    {% if key == product.id|slugify %}
-                                                        {{ value }}
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </option>
+                                        <select class="form-select form-select-sm" id="select{{product.id}}">
+                                            {% for key, value in quantities.items %}
+                                                <!--Slugify turns value into a string-->
+                                                {% if key == product.id|slugify %}
+                                                <option selected>{{ value }}</option>
+                                                {% endif %}
+                                            {% endfor %}
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -75,7 +74,11 @@
                                             <option value="3">5</option>
                                         </select>
                                     </div>
-                                <div>
+                                </div>
+                                <!--Update quantity of item in cart button-->
+                                <br/>
+                                <br/>
+                                <button type="button" data-index="{{product.id}}" class="btn btn-secondary update-cart">Update</button>
                             </center>
                         </div>
                     </div>
@@ -89,4 +92,38 @@
     <br/>
     <br/>
     <br/>
+
+<script>
+    // Using same code as product.html, with some changes
+    // Check if the button was pressed
+    $(document).on('click', '.update-cart', function(e){
+            e.preventDefault();
+            //Grab the product id
+            const productId = $(this).data('index');
+            // Use Ajax to send info to backend without refreshing the webpage
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_update' %}",
+                data: {
+                    product_id: $(this).data('index'),
+                    product_qty: $('#select' + productId + ' option:selected').text(), // Note the space before option is required. The space is necessary to correctly select the <option> element.
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+
+                success: function(json){
+                    console.log(json)
+                    //document.getElementById("cart_quantity").textContent = json.qty
+                    location.reload();
+                },
+
+                error: function(xhr, errmsh, err){
+
+                }
+
+
+            });
+        });
+</script>
+
 {% endblock %}
