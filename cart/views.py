@@ -48,13 +48,23 @@ def cart_add(request):
 
 # Deleting from cart view
 def cart_delete(request):
-    pass
+    cart = Cart(request)
+    # Using part of the code from cart_add view
+    if request.POST.get("action") == "post":
+
+        # Get id and quantity of product
+        product_id = int(request.POST.get("product_id"))
+
+        # Call delete function in cart
+        cart.delete(product=product_id)
+
+        response = JsonResponse({"product": product_id})
+        return response
 
 
 # Updating cart view
 def cart_update(request):
     cart = Cart(request)
-
     # Using part of the code from cart_add view
     if request.POST.get("action") == "post":
 

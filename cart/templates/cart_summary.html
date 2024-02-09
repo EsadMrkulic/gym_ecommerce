@@ -79,6 +79,7 @@
                                 <br/>
                                 <br/>
                                 <button type="button" data-index="{{product.id}}" class="btn btn-secondary update-cart">Update</button>
+                                <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">Remove</button>
                             </center>
                         </div>
                     </div>
@@ -94,11 +95,12 @@
     <br/>
 
 <script>
+    // Update cart
     // Using same code as product.html, with some changes
     // Check if the button was pressed
     $(document).on('click', '.update-cart', function(e){
             e.preventDefault();
-            //Grab the product id
+            // Grab the product id
             const productId = $(this).data('index');
             // Use Ajax to send info to backend without refreshing the webpage
             $.ajax({
@@ -107,6 +109,36 @@
                 data: {
                     product_id: $(this).data('index'),
                     product_qty: $('#select' + productId + ' option:selected').text(), // Note the space before option is required. The space is necessary to correctly select the <option> element.
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+
+                success: function(json){
+                    console.log(json)
+                    //document.getElementById("cart_quantity").textContent = json.qty
+                    location.reload();
+                },
+
+                error: function(xhr, errmsh, err){
+
+                }
+
+
+            });
+        });
+
+    // Delete product from  cart
+    // Check if the button was pressed
+    $(document).on('click', '.delete-product', function(e){
+            e.preventDefault();
+            // Grab the product id
+            // const productId = $(this).data('index');
+            // Use Ajax to send info to backend without refreshing the webpage
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_delete' %}",
+                data: {
+                    product_id: $(this).data('index'),
                     csrfmiddlewaretoken: '{{ csrf_token }}',
                     action: 'post'
                 },
