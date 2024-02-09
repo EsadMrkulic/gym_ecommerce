@@ -11,6 +11,8 @@
         </div>
     </header>
     <!-- Section-->
+    <br/>
+    <br/>
     <div class="container">
         <!--{{ cart_products }}-->
         {% if cart|length == 0 %}
@@ -86,6 +88,11 @@
                 </div>
             </div>
             {% endfor %}
+            <div align="right">
+                <p>
+                    <h4>Total: ${{ totals }}</h4>
+                </p>
+            </div>
         {% endif %}
     </div>
     <br/>
