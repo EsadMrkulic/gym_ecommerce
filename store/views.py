@@ -10,6 +10,12 @@ from django import forms
 # Create your views here.
 
 
+# Category summary view
+def category_summary(request):
+    categories = Category.objects.all()
+    return render(request, "category_summary.html", {"categories": categories})
+
+
 # Product view
 def product(request, pk):
     product = Product.objects.get(id=pk)

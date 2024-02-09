@@ -13,4 +13,7 @@ urlpatterns = [
     path(
         "category/<str:foo>", views.category, name="category"
     ),  # Str = string / foo = variable passed in
+    path(
+        "category_summary", views.category_summary, name="category_summary"
+    ),  # Str = string / foo = variable passed in
 ]
