@@ -4,10 +4,31 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm
+from .forms import SignUpForm, UpdateUserForm
 from django import forms
 
 # Create your views here.
+
+
+# Update user profile view
+def update_user(request):
+    # First check to make sure that user logged in
+    if request.user.is_authenticated:
+        current_user = User.objects.get(id=request.user.id)  # Get current user
+
+        # When user goes to webpage for first time, it'll have all of their info already in the form
+        user_form = UpdateUserForm(request.POST or None, instance=current_user)
+
+        if user_form.is_valid():
+            user_form.save()
+
+            login(request, current_user)
+            messages.success(request, "Your profile has been updated!")
+            return redirect("home")
+        return render(request, "update_user.html", {"user_form": user_form})
+    else:
+        messages.success(request, "You must be logged in to access this page...")
+        return redirect("home")
 
 
 # Category summary view
