@@ -4,10 +4,41 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm
+from .forms import SignUpForm, UpdateUserForm, UpdatePasswordForm
 from django import forms
 
 # Create your views here.
+
+
+# Update password view
+def update_password(request):
+    # First check to see if user has a password, which they don't if they'r not logged in
+    if request.user.is_authenticated:
+        current_user = request.user
+
+        # Check if they filled out the form
+        if request.method == "POST":
+            form = UpdatePasswordForm(current_user, request.POST)
+
+            # Check if the form is valid
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Your password has been changed!")
+                login(request, current_user)
+                return redirect("update_user")
+
+            # If form is not valid
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                    return redirect("update_password")
+
+        else:
+            form = UpdatePasswordForm(current_user)
+            return render(request, "update_password.html", {"form": form})
+    else:
+        messages.success(request, "Your must be logged in to access this page...")
+        return redirect("home")
 
 
 # Update user profile view
@@ -28,7 +59,7 @@ def update_user(request):
         return render(request, "update_user.html", {"user_form": user_form})
     else:
         messages.success(request, "You must be logged in to access this page...")
-        return redirect("home")
+        return redirect("login")
 
 
 # Category summary view
