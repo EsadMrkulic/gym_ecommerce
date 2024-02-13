@@ -1,7 +1,46 @@
 from django.db import models
 import datetime
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 # Create your models here.
+
+
+# Customer Profile Model
+class Profile(
+    models.Model
+):  # This profile model gives every user a profile. It's mainly to extend/add things to the Django User model
+
+    # Link each user to a profile
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE
+    )  # CASCADE deletes the profile associated to User if User deletes their account
+    date_modified = models.DateTimeField(
+        User, auto_now=True
+    )  # Time for when user updates
+    phone = models.CharField(max_length=15, blank=True)
+    address1 = models.CharField(max_length=200, blank=True)
+    address2 = models.CharField(max_length=200, blank=True)
+    city = models.CharField(max_length=200, blank=True)
+    state = models.CharField(max_length=200, blank=True)
+    zipcode = models.CharField(max_length=200, blank=True)
+    country = models.CharField(max_length=200, blank=True)
+
+    # Username of the user account is what's shown in admin panel
+    def __str__(self):
+        return self.user.username
+
+
+# Create a user profile by defaullt when the user signs up
+def create_profile(sender, instance, created, **kwargs):
+    # If the user account has been created, it saves a profile to it
+    if created:
+        user_profile = Profile(user=instance)
+        user_profile.save()
+
+
+# Automate the profile
+post_save.connect(create_profile, sender=User)
 
 
 # Model for categories of products
