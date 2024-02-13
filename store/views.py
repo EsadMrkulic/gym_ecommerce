@@ -1,18 +1,37 @@
 from django.shortcuts import render, redirect
-from .models import Product, Category
+from .models import Product, Category, Profile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm, UpdateUserForm, UpdatePasswordForm
+from .forms import SignUpForm, UpdateUserForm, UpdatePasswordForm, UserInfoForm
 from django import forms
 
 # Create your views here.
 
 
+# Update the User's profile view
+def update_info(request):
+    # First check to make sure that user logged in
+    if request.user.is_authenticated:
+        current_user = Profile.objects.get(id=request.user.id)  # Get current user
+
+        # When user goes to webpage for first time, it'll have all of their info already in the form
+        form = UserInfoForm(request.POST or None, instance=current_user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your personal information has been updated!")
+            return redirect("home")
+        return render(request, "update_info.html", {"form": form})
+    else:
+        messages.success(request, "You must be logged in to access this page...")
+        return redirect("login")
+
+
 # Update password view
 def update_password(request):
-    # First check to see if user has a password, which they don't if they'r not logged in
+    # First check to see if user has a password, which they don't if they're not logged in
     if request.user.is_authenticated:
         current_user = request.user
 
@@ -41,7 +60,7 @@ def update_password(request):
         return redirect("home")
 
 
-# Update user profile view
+# Update user account info view
 def update_user(request):
     # First check to make sure that user logged in
     if request.user.is_authenticated:
@@ -154,8 +173,13 @@ def register_user(request):
             # Login the user
             user = authenticate(username=username, password=password)
             login(request, user)
-            messages.success(request, ("You have successfully registered!"))
-            return redirect("home")
+            messages.success(
+                request,
+                (
+                    "You have successfully registered! Fill out your information for easy checkout."
+                ),
+            )
+            return redirect("update_info")
         else:
             messages.success(
                 request,
