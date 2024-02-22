@@ -1,4 +1,5 @@
 from store.models import Product, Profile
+import json
 
 
 # Cart class
@@ -16,6 +17,14 @@ class Cart:
 
         # Make the cart available on all pages of the website
         self.cart = cart
+
+        # ***Cart persistance***
+        # When user logs back in, the user's cart gets updated with what's in their old cart
+        if self.request.user.is_authenticated:
+            # If the user is logged in, load cart from their profile
+            profile = Profile.objects.filter(user=self.request.user).first()
+            if profile and profile.old_cart:
+                self.cart.update(json.loads(profile.old_cart))
 
     # Add function
     def add(self, product, quantity):
