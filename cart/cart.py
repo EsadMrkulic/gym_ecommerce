@@ -1,10 +1,11 @@
-from store.models import Product
+from store.models import Product, Profile
 
 
 # Cart class
 class Cart:
     def __init__(self, request):  # Request to view page
         self.session = request.session  # Sessions for users
+        self.request = request  # Get request
 
         # Get current session key if it exists
         cart = self.session.get("session_key")
@@ -29,6 +30,19 @@ class Cart:
             self.cart[product_id] = int(product_qty)
 
         self.session.modified = True
+
+        # Deal with logged in user
+        if self.request.user.is_authenticated:
+            # Get the current user profile
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
+            # Convert to single quotes to double quotes for the dictionaries (dictionary -> JSON format)
+            carty = str(self.cart)  # Converted to a string
+            carty = carty.replace(
+                "'", '"'
+            )  # Replaces all single quotes to double quotes
+
+            # Save carty to Profile model
+            current_user.update(old_cart=str(carty))
 
     # Create a filter that gives us a length
     def __len__(self):

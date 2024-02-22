@@ -25,6 +25,7 @@ class Profile(
     state = models.CharField(max_length=200, blank=True)
     zipcode = models.CharField(max_length=200, blank=True)
     country = models.CharField(max_length=200, blank=True)
+    old_cart = models.CharField(max_length=200, blank=True, null=True)
 
     # Username of the user account is what's shown in admin panel
     def __str__(self):
