@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "store",  # Add the store app to the installed apps
     "cart",  # Add cart app to the installed apps
+    "payment",  # Add payment app to the installed apps
 ]
 
 MIDDLEWARE = [
